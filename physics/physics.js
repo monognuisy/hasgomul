@@ -32,10 +32,10 @@ var material = new THREE.MeshPhongMaterial({
 var sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
 
-var axesHelper = new THREE.AxesHelper( 50 );
+var axesHelper = new THREE.AxesHelper( 100 );
 scene.add( axesHelper );
 
-camera.position.z = 60;
+camera.position.z = 100;
 
 // var ambientLight = new THREE.AmbientLight( 0xFFFFFF, 5.0);
 
