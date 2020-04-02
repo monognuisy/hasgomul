@@ -50,9 +50,9 @@ function Data(location, accel, vel, b, m, k){
 
 const dt = 0.025;
 
-var X = new Data(20,0,0,0,1,10);
-var Y = new Data(20,0,0,0,1,20);
-var Z = new Data(50,0,0,0,1,30);
+var X = new Data(20,0,0,1,1,10);
+var Y = new Data(20,0,0,1,1,20);
+var Z = new Data(50,0,0,1,1,30);
 
 sphere.position.set(X.location,Y.location,Z.location);
 
