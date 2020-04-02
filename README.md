@@ -1,1 +1,1 @@
-# hasgomul.github.io
+# hasgomul
