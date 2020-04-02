@@ -35,7 +35,7 @@ scene.add(sphere);
 var axesHelper = new THREE.AxesHelper( 50 );
 scene.add( axesHelper );
 
-camera.position.z = 20;
+camera.position.z = 60;
 
 // var ambientLight = new THREE.AmbientLight( 0xFFFFFF, 5.0);
 
