@@ -1,3 +1,5 @@
+// import * as dat from './js/dat.gui.min.js'
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -13,55 +15,78 @@ window.addEventListener( 'resize', function(){
     camera.updateProjectionMatrix();
 });
 
+var guiControls_X = new function(){
+    this.b = 0;
+    this.k = 10;
+};
+
+var guiControls_Y = new function(){
+    this.b = 0;
+    this.k = 20;
+};
+
+var guiControls_Z = new function(){
+    this.b = 0;
+    this.k = 30;
+};
+
+var guiMass = new function(){
+    this.m = 1;
+}
+
+var gui = new dat.GUI();
+let gui_X = gui.addFolder('X_motion');
+let gui_Y = gui.addFolder('Y_motion');
+let gui_Z = gui.addFolder('Z_motion');
+
+gui.add(guiMass, 'm' , 0.1, 10);
+
+gui_X.add(guiControls_X, 'b',0,10);
+gui_X.add(guiControls_X, 'k',0,100);
+
+gui_Y.add(guiControls_Y, 'b',0,10);
+gui_Y.add(guiControls_Y, 'k',0,100);
+
+gui_Z.add(guiControls_Z, 'b',0,10);
+gui_Z.add(guiControls_Z, 'k',0,100);
+
+
+
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 var light = new THREE.DirectionalLight( 0xffffff );
 light.position.set( 0,1,1 ).normalize();
 scene.add(light);
 
-
 var geometry = new THREE.SphereGeometry(5,100,100);
 
-// var material = new THREE.MeshBasicMaterial({color:0x0066FF, wireframe: false})
 var material = new THREE.MeshPhongMaterial({
     color : 0x0066FF,
     flatShading : true
 });
 
-
 var sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
+
 
 var axesHelper = new THREE.AxesHelper( 100 );
 scene.add( axesHelper );
 
 camera.position.z = 100;
 
-// var ambientLight = new THREE.AmbientLight( 0xFFFFFF, 5.0);
-
-function Data(location, accel, vel, b, m, k){
+function Data(location, accel, vel){
     this.location = location;
     this.accel = accel;
     this.vel = vel;
-    this.b = b;
-    this.m = m;
-    this.k = k;
 };
 
 const dt = 0.025;
 
-var X = new Data(20,0,0,1,1,10);
-var Y = new Data(20,0,0,1,1,20);
-var Z = new Data(50,0,0,1,1,30);
+var X = new Data(20,0,0);
+var Y = new Data(20,0,0);
+var Z = new Data(50,0,0);
 
 sphere.position.set(X.location,Y.location,Z.location);
-
-// var update = function(Cord){
-//     Cord.vel += Cord.accel*dt;
-//     sphere.position.x += Cord.vel * dt;
-//     Cord.location = sphere.position.getComponent(0);
-//     Cord.accel = -(Cord.b*Cord.vel + Cord.k*Cord.location)/Cord.m
-// };
 
 //draw scene
 var render = function(){
@@ -73,23 +98,20 @@ var GameLoop = function(){
 
     requestAnimationFrame(GameLoop);
 
-    // update(X);
-    // update(Y);
-
     X.vel += X.accel*dt;
     sphere.position.x += X.vel * dt;
     X.location = sphere.position.getComponent(0);
-    X.accel = -(X.b*X.vel + X.k*X.location)/X.m;
+    X.accel = -(guiControls_X.b*X.vel + guiControls_X.k*X.location)/guiMass.m;
 
     Y.vel += Y.accel*dt;
     sphere.position.y += Y.vel * dt;
     Y.location = sphere.position.getComponent(1);
-    Y.accel = -(Y.b*Y.vel + Y.k*Y.location)/Y.m;
+    Y.accel = -(guiControls_Y.b*Y.vel + guiControls_Y.k*Y.location)/guiMass.m;
 
     Z.vel += Z.accel*dt;
     sphere.position.z += Z.vel * dt;
     Z.location = sphere.position.getComponent(2);
-    Z.accel = -(Z.b*Z.vel + Z.k*Z.location)/Z.m;
+    Z.accel = -(guiControls_Z.b*Z.vel + guiControls_Z.k*Z.location)/guiMass.m;
 
     render();
 }
