@@ -1,7 +1,5 @@
 // import * as dat from './js/dat.gui.min.js'
 
-import {motion} from './motion.js'
-
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -25,8 +23,6 @@ var light = new THREE.DirectionalLight( 0xffffff );
 light.position.set( 0,1,1 ).normalize();
 scene.add(light);
 
-
-
 var geometry = new THREE.SphereGeometry(5,100,100);
 var material = new THREE.MeshPhongMaterial({
     color : 0xFE98A0,
@@ -35,15 +31,11 @@ var material = new THREE.MeshPhongMaterial({
 var sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
 
-
-
 //axisHelper
 var axesHelper = new THREE.AxesHelper( 100 );
 scene.add( axesHelper );
 
 
-
-//camera
 camera.position.z = 100;
 camera.position.x = 100;
 camera.position.y = 100;
@@ -92,9 +84,48 @@ gui_Z.add(guiControls_Z, 'k',0,100);
 
 gui.addColor( colour, 'color' ).onChange( function() { sphere.material.color.set( colour.color ); } );
 
+
+function Data(location, accel, vel){
+    this.location = location;
+    this.accel = accel;
+    this.vel = vel;
+};
+
+const dt = 0.025;
+
+//define X,Y,Z
+let X = new Data(20,0,0);
+let Y = new Data(20,0,0);
+let Z = new Data(50,0,0);
+
+sphere.position.set(X.location,Y.location,Z.location);
+
+//draw scene
+var render = function(){
+    renderer.render(scene,camera);
+};
+
+//game loop
 var GameLoop = function(){
+
     requestAnimationFrame(GameLoop);
-    motion();
+
+    X.vel += X.accel*dt;
+    sphere.position.x += X.vel * dt;
+    X.location = sphere.position.getComponent(0);
+    X.accel = -(guiControls_X.b*X.vel + guiControls_X.k*X.location)/guiMass.m;
+
+    Y.vel += Y.accel*dt;
+    sphere.position.y += Y.vel * dt;
+    Y.location = sphere.position.getComponent(1);
+    Y.accel = -(guiControls_Y.b*Y.vel + guiControls_Y.k*Y.location)/guiMass.m;
+
+    Z.vel += Z.accel*dt;
+    sphere.position.z += Z.vel * dt;
+    Z.location = sphere.position.getComponent(2);
+    Z.accel = -(guiControls_Z.b*Z.vel + guiControls_Z.k*Z.location)/guiMass.m;
+
     render();
 }
+
 GameLoop();
