@@ -46,16 +46,22 @@ camera.lookAt(scene.position);
 var guiControls_X = new function(){
     this.b = 0;
     this.k = 10;
+    this.F0 = 10;
+    this.w = 1;
 };
 
 var guiControls_Y = new function(){
     this.b = 0;
     this.k = 20;
+    this.F0 = 10;
+    this.w = 1;
 };
 
 var guiControls_Z = new function(){
     this.b = 0;
     this.k = 30;
+    this.F0 = 10;
+    this.w = 1;
 };
 
 var guiMass = new function(){
@@ -75,12 +81,18 @@ gui.add(guiMass, 'm' , 0.1, 10);
 
 gui_X.add(guiControls_X, 'b',0,10);
 gui_X.add(guiControls_X, 'k',0,100);
+gui_X.add(guiControls_X, 'F0',0,100);
+gui_X.add(guiControls_X, 'w',0,100);
 
 gui_Y.add(guiControls_Y, 'b',0,10);
 gui_Y.add(guiControls_Y, 'k',0,100);
+gui_Y.add(guiControls_Y, 'F0',0,100);
+gui_Y.add(guiControls_Y, 'w',0,100);
 
 gui_Z.add(guiControls_Z, 'b',0,10);
 gui_Z.add(guiControls_Z, 'k',0,100);
+gui_Z.add(guiControls_Z, 'F0',0,100);
+gui_Z.add(guiControls_Z, 'w',0,100);
 
 gui.addColor( colour, 'color' ).onChange( function() { sphere.material.color.set( colour.color ); } );
 
@@ -92,6 +104,8 @@ function Data(location, accel, vel){
 };
 
 const dt = 0.025;
+
+var t = 0;
 
 //define X,Y,Z
 let X = new Data(20,0,0);
@@ -113,18 +127,20 @@ var GameLoop = function(){
     X.vel += X.accel*dt;
     sphere.position.x += X.vel * dt;
     X.location = sphere.position.getComponent(0);
-    X.accel = -(guiControls_X.b*X.vel + guiControls_X.k*X.location)/guiMass.m;
+    X.accel = -(guiControls_X.b*X.vel + guiControls_X.k*X.location + guiControls_X.F0*Math.cos(guiControls_X.w*t))/guiMass.m;
 
     Y.vel += Y.accel*dt;
     sphere.position.y += Y.vel * dt;
     Y.location = sphere.position.getComponent(1);
-    Y.accel = -(guiControls_Y.b*Y.vel + guiControls_Y.k*Y.location)/guiMass.m;
+    Y.accel = -(guiControls_Y.b*Y.vel + guiControls_Y.k*Y.location + guiControls_Y.F0*Math.cos(guiControls_Y.w*t))/guiMass.m;
 
     Z.vel += Z.accel*dt;
     sphere.position.z += Z.vel * dt;
     Z.location = sphere.position.getComponent(2);
-    Z.accel = -(guiControls_Z.b*Z.vel + guiControls_Z.k*Z.location)/guiMass.m;
+    Z.accel = -(guiControls_Z.b*Z.vel + guiControls_Z.k*Z.location + guiControls_Z.F0*Math.cos(guiControls_Z.w*t))/guiMass.m;
 
+    t += dt;
+    console.log(t)
     render();
 }
 
