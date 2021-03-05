@@ -123,34 +123,45 @@ const render = () => {
   renderer.render(scene, camera);
 };
 
-const objectMotion_euler = (obj, guiControls, index) => {
-  obj.vel += obj.accel * dt;
+const rk4 = (f) => (u, v, t, dt) => {
+  const k1 = f(t, u, v);
+  const k2 = f(t + dt / 2, u + (dt * k1) / 2, v + (dt * k1) / 2);
+  const k3 = f(t + dt / 2, u + (dt * k2) / 2, v + (dt * k2) / 2);
+  const k4 = f(t + dt, u + dt * k3, v + dt * k3);
+
+  return u + (1 / 6) * dt * (k1 + 2 * k2 + 2 * k3 + k4);
+};
+
+const objectMotion = (obj, guiControls, index, t, dt) => {
+  obj.vel = rk4(
+    (t_, v_, x_) =>
+      (guiControls.F0 * Math.cos(guiControls.w * t_) -
+        guiControls.b * v_ +
+        -guiControls.k * x_) /
+      guiMass.m,
+  )(obj.vel, obj.location, t, dt);
+
   switch (index) {
     case 0:
-      sphere.position.x += obj.vel * dt;
+      sphere.position.x = rk4((t_, x_, v_) => v_)(obj.location, obj.vel, t, dt);
       break;
     case 1:
-      sphere.position.y += obj.vel * dt;
+      sphere.position.y = rk4((t_, x_, v_) => v_)(obj.location, obj.vel, t, dt);
       break;
     case 2:
-      sphere.position.z += obj.vel * dt;
+      sphere.position.z = rk4((t_, x_, v_) => v_)(obj.location, obj.vel, t, dt);
+      break;
   }
   obj.location = sphere.position.getComponent(index);
-  obj.accel =
-    -(
-      guiControls.b * obj.vel +
-      guiControls.k * obj.location +
-      guiControls.F0 * Math.cos(guiControls.w * t)
-    ) / guiMass.m;
 };
 
 //game loop
 const GameLoop = () => {
   requestAnimationFrame(GameLoop);
 
-  objectMotion_euler(X, guiControls_X, 0);
-  objectMotion_euler(Y, guiControls_Y, 1);
-  objectMotion_euler(Z, guiControls_Z, 2);
+  objectMotion(X, guiControls_X, 0, t, dt);
+  objectMotion(Y, guiControls_Y, 1, t, dt);
+  objectMotion(Z, guiControls_Z, 2, t, dt);
 
   t += dt;
   render();
