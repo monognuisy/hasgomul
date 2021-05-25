@@ -1,4 +1,4 @@
-# hasgomul
+# ✨hasgomul
 
 Driven Harmonic Oscillator Simulation w/ Runge-Kutta method.
 
