@@ -2,7 +2,7 @@
 
 Driven Harmonic Oscillator Simulation w/ Runge-Kutta method.
 
-https://chemicals1234.github.io/hasgomul/physics/oscillation.html
+https://monognuisy.github.io/hasgomul/physics/oscillation.html
 
 
 ## Variables
